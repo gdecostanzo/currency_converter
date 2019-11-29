@@ -4,10 +4,6 @@ from xml.dom import minidom
 # 3th parts imports
 import requests
 
-valid_iso_currency_codes = ('EUR', 'USD', 'JPY', 'BGN', 'CZK', 'DKK', 'GBP', 'HUF', 'PLN', 'RON', 'SEK', 'CHF', 'ISK',
-                            'NOK', 'HRK', 'RUB', 'TRY', 'AUD', 'BRL', 'CAD', 'CNY', 'HKD', 'IDR', 'ILS', 'INR', 'KRW',
-                            'MXN', 'MYR', 'NZD', 'PHP', 'SGD', 'THB', 'ZAR')
-
 
 def load_currencies() -> dict:
     """Read latest currency rates (EUR) from Web and returns a dictionary.

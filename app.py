@@ -9,10 +9,13 @@ from flask import (
 )
 
 # internal imports
-import utils
+import parser
 
 app = Flask(__name__)
-exchange_rates_by_data = utils.load_currencies()
+exchange_rates_by_data = parser.load_currencies()
+valid_iso_currency_codes = ('EUR', 'USD', 'JPY', 'BGN', 'CZK', 'DKK', 'GBP', 'HUF', 'PLN', 'RON', 'SEK', 'CHF', 'ISK',
+                            'NOK', 'HRK', 'RUB', 'TRY', 'AUD', 'BRL', 'CAD', 'CNY', 'HKD', 'IDR', 'ILS', 'INR', 'KRW',
+                            'MXN', 'MYR', 'NZD', 'PHP', 'SGD', 'THB', 'ZAR')
 
 
 @app.route('/convert')
@@ -42,9 +45,9 @@ def convert():
 
     src_currency = request.args.get('src_currency')
     dest_currency = request.args.get('des​t_currency')
-    if src_currency not in utils.valid_iso_currency_codes:
+    if src_currency not in valid_iso_currency_codes:
         return "Invalid src_currency code", 400
-    if dest_currency not in utils.valid_iso_currency_codes:
+    if dest_currency not in valid_iso_currency_codes:
         return "Invalid dest_currency code", 400
 
     # if not specified, latest date available will be used
