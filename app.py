@@ -25,7 +25,7 @@ def convert():
     An example of call:
     /convert?amount=10&src_currency=EUR&des​t_currency=GBP&reference_date=2019-11-28
 
-    An example of response
+    An example of response:
     {
         “amount”: 8.518,
         “currency”: ”EUR”
