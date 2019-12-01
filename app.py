@@ -1,21 +1,18 @@
-# Python imports
-import re
-
 # 3th parts imports
 from flask import (
     Flask,
     request,
     jsonify
 )
+from jsonschema import validate
+from jsonschema.exceptions import ValidationError
 
 # internal imports
-import parser
+import currency_parser
+from static.convert_schema import convert_schema
 
 app = Flask(__name__)
-exchange_rates_by_data = parser.load_currencies()
-valid_iso_currency_codes = ('EUR', 'USD', 'JPY', 'BGN', 'CZK', 'DKK', 'GBP', 'HUF', 'PLN', 'RON', 'SEK', 'CHF', 'ISK',
-                            'NOK', 'HRK', 'RUB', 'TRY', 'AUD', 'BRL', 'CAD', 'CNY', 'HKD', 'IDR', 'ILS', 'INR', 'KRW',
-                            'MXN', 'MYR', 'NZD', 'PHP', 'SGD', 'THB', 'ZAR')
+exchange_rates_by_data = currency_parser.load_currencies()
 
 
 @app.route('/convert')
@@ -39,23 +36,18 @@ def convert():
 
     # Parameters validation
     try:
-        amount = float(request.args.get('amount'))
-    except ValueError:
-        return "Invalid amount value", 400
+        validate(request.args.to_dict(), convert_schema)
+    except ValidationError as ve:
+        return ve.message, 400
 
+    # Get parameters
+    amount = float(request.args.get('amount'))
     src_currency = request.args.get('src_currency')
-    dest_currency = request.args.get('des​t_currency')
-    if src_currency not in valid_iso_currency_codes:
-        return "Invalid src_currency code", 400
-    if dest_currency not in valid_iso_currency_codes:
-        return "Invalid dest_currency code", 400
-
+    dest_currency = request.args.get('dest_currency')
     # if not specified, latest date available will be used
     reference_date = request.args.get('reference_date', list(exchange_rates_by_data.keys())[0])
-    if not re.match('[0-9]{4}-[0-9]{2}-[0-9]{2}$', reference_date):
-        return "Invalid reference date", 400
     if reference_date not in exchange_rates_by_data:
-        return "Reference date not available", 404
+        return "Reference date not found", 404
 
     # Convert amount
     src_rate = float(exchange_rates_by_data[reference_date][src_currency])

@@ -14,7 +14,7 @@ If not provided, the latest date available will be used
 
 An example of usage:
 ```
-/convert?amount=10&src_currency=EUR&des​t_currency=GBP
+/convert?amount=10&src_currency=EUR&dest_currency=GBP
 ```
 
 An example of response:
