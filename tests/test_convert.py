@@ -18,7 +18,7 @@ def test_success():
     with requests_mock.Mocker() as mock_request:
         mock_request.get('https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml', text=file_text)
         from app import app
-        response = app.test_client().get('/convert?amount=10&src_currency=EUR&des​t_currency=GBP&reference_date=2019-11-28')
+        response = app.test_client().get('/convert?amount=10&src_currency=EUR&dest_currency=GBP&reference_date=2019-11-28')
 
     data = json.loads(response.get_data(as_text=True))
 
@@ -36,30 +36,27 @@ def test_bad_request():
     with requests_mock.Mocker() as mock_request:
         mock_request.get('https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml', text=file_text)
         from app import app
-        response = app.test_client().get('/convert?amount=10.a&src_currency=EUR&des​t_currency=GBP&reference_date=2019-11-28')
+        response = app.test_client().get('/convert?amount=10.a&src_currency=EUR&dest_currency=GBP&reference_date=2019-11-28')
 
         assert response.status_code == 400
-        assert response.get_data(as_text=True) == "Invalid amount value"
 
     # Test invalid currency code
     with requests_mock.Mocker() as mock_request:
         mock_request.get('https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml', text=file_text)
         from app import app
         response = app.test_client().get(
-            '/convert?amount=10&src_currency=EURO&des​t_currency=GBP&reference_date=2019-11-28')
+            '/convert?amount=10&src_currency=EURO&dest_currency=GBP&reference_date=2019-11-28')
 
         assert response.status_code == 400
-        assert response.get_data(as_text=True) == "Invalid src_currency code"
 
     # Test invalid reference date
     with requests_mock.Mocker() as mock_request:
         mock_request.get('https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml', text=file_text)
         from app import app
         response = app.test_client().get(
-            '/convert?amount=10&src_currency=EUR&des​t_currency=GBP&reference_date=2019-11-008')
+            '/convert?amount=10&src_currency=EUR&dest_currency=GBP&reference_date=2019-11-008')
 
         assert response.status_code == 400
-        assert response.get_data(as_text=True) == "Invalid reference date"
 
 
 def test_not_found():
@@ -67,7 +64,7 @@ def test_not_found():
     with requests_mock.Mocker() as mock_request:
         mock_request.get('https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml', text=file_text)
         from app import app
-        response = app.test_client().get('/convert?amount=10&src_currency=EUR&des​t_currency=GBP&reference_date=2019-12-28')
+        response = app.test_client().get('/convert?amount=10&src_currency=EUR&dest_currency=GBP&reference_date=2019-12-28')
 
         assert response.status_code == 404
-        assert response.get_data(as_text=True) == "Reference date not available"
+        assert response.get_data(as_text=True) == "Reference date not found"
